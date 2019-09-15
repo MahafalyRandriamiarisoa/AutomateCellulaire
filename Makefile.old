@@ -1,0 +1,31 @@
+# compilateur
+CC := gcc
+# options de compilation
+CFLAGS := -std=c99 -Wall -Wextra -pedantic -ggdb -Wno-unused-but-set-parameter -Wno-unused-variable -Wno-unused-parameter -Wno-abi
+
+# DPROJ = ../AutomateCellulaire
+DPROJ = . 
+DOUT = out
+
+BIN = $(DOUT)/exe
+
+OBJS = $(DOUT)/main.o $(DOUT)/automate.o
+
+INCLUDES = -I $(DPROJ)
+# règle de compilation --- exécutables
+all : main
+	
+main : out/main.o out/automate.o
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+	
+
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ -c $< 
+
+memoire : $(BIN)
+	valgrind --leak-check=full ./$(BIN)
+
+# options de compilation
+clean:
+	rm $(BIN) *.o
+ 
