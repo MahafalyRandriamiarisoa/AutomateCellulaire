@@ -1,0 +1,6 @@
+pour executer le programme il suffit de faire dans le dossier principal :
+    $ make 
+    $ make exe
+
+pour vérifier l'état de la mémoire : 
+    $ make memoire

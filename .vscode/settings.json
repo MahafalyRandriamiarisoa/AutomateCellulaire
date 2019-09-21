@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "termcap_initializer.h": "c",
+        "automate.h": "c",
+        "utils.h": "c"
+    }
+}

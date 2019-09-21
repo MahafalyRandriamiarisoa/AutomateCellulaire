@@ -3,7 +3,7 @@
 # compilateur
 CC := gcc
 # options de compilation
-CFLAGS := -std=c99 -Wall -Wextra -pedantic -ggdb -Wno-unused-but-set-parameter -Wno-unused-variable -Wno-unused-parameter -Wno-abi
+CFLAGS := -std=c99 -Wall -Wextra -pedantic -ggdb -Wno-unused-but-set-parameter -Wno-unused-variable -Wno-unused-parameter -Wno-abi 
 
 # DPROJ = ../AutomateCellulaire
 # DPROJ = . 
@@ -15,13 +15,13 @@ DOUT = out
 BIN = $(DOUT)/exe
 
 # liste des objets (.o)
-OBJS = $(DOUT)/main.o $(DOUT)/automate.o $(DOUT)/termcap_initializer.o
+OBJS = $(DOUT)/main.o $(DOUT)/automate.o $(DOUT)/termcap_initializer.o $(DOUT)/utils.o
 
 # liste des dependances (header)
-DEPS = header/automate.h header/termcap_initializer.h
+DEPS = header/automate.h header/termcap_initializer.h header/utils.h
 
 # options de compilation (lien vers certaine library)
-OPT = -ltermcap -lncurses
+OPT = -ltermcap -lncurses -lm
 # INCLUDES = -I $(DPROJ)
 # règle de compilation --- exécutables
 
@@ -37,6 +37,8 @@ $(DOUT)/automate.o : src/automate.c $(DEPS)
 $(DOUT)/termcap_initializer.o : src/termcap_initializer.c $(DEPS)
 	$(CC) $(CFLAGS) -c src/termcap_initializer.c -o $(DOUT)/termcap_initializer.o 
 
+$(DOUT)/utils.o : src/utils.c $(DEPS)
+	$(CC) $(CFLAGS) -c src/utils.c -o $(DOUT)/utils.o 
 
 
 memoire : $(BIN)
