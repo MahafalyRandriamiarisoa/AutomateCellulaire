@@ -15,10 +15,10 @@ DOUT = out
 BIN = $(DOUT)/exe
 
 # liste des objets (.o)
-OBJS = $(DOUT)/main.o $(DOUT)/automate.o $(DOUT)/termcap_initializer.o $(DOUT)/utils.o
+OBJS = $(DOUT)/main.o $(DOUT)/automate.o $(DOUT)/termcap_initializer.o $(DOUT)/utils.o $(DOUT)/pgm_img.o 
 
 # liste des dependances (header)
-DEPS = header/automate.h header/termcap_initializer.h header/utils.h
+DEPS = header/automate.h header/termcap_initializer.h header/utils.h header/pgm_img.h 
 
 # options de compilation (lien vers certaine library)
 OPT = -ltermcap -lncurses -lm
@@ -40,9 +40,21 @@ $(DOUT)/termcap_initializer.o : src/termcap_initializer.c $(DEPS)
 $(DOUT)/utils.o : src/utils.c $(DEPS)
 	$(CC) $(CFLAGS) -c src/utils.c -o $(DOUT)/utils.o 
 
+$(DOUT)/pgm_img.o : src/pgm_img.c $(DEPS)
+	$(CC) $(CFLAGS) -c src/pgm_img.c -o $(DOUT)/pgm_img.o 
+
+# $(DOUT)/differentsRules.o : src/differentsRules.c $(DEPS)
+# 	$(CC) $(CFLAGS) -c src/differentsRules.c -o $(DOUT)/differentsRules.o 
+
+# $(DOUT)/RuleStrategy.o : src/RuleStrategy.c $(DEPS)
+# 	$(CC) $(CFLAGS) -c src/RuleStrategy.c -o $(DOUT)/RuleStrategy.o 
 
 memoire : $(BIN)
-	valgrind --leak-check=full ./$(BIN)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(BIN)
+	# valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(BIN)
+
+memoire2 : $(BIN)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(BIN) sc
 
 exe : 
 	@./$(BIN)

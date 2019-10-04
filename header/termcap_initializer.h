@@ -7,7 +7,6 @@
 #include <curses.h>
 #include <ncurses.h>
 
-int init_termcap();
 
 struct s_termcap_cmd
 {
@@ -25,6 +24,13 @@ struct s_termcap_cmd
 	char *kr; //input de la touche fleche droite
 };
 
-extern struct s_termcap_cmd tc_cmd;
+typedef struct s_termcap_cmd* stc;
+
+int init_termcap(stc);
+// extern stc tc_cmd;
+// extern struct s_termcap_cmd tc_cmd;
+
+void freestc(stc);
+
 
 #endif

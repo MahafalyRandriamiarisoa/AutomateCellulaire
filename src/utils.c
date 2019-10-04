@@ -1,6 +1,7 @@
 
 
 #include "../header/utils.h"
+#include "../header/automate.h"
 
 int mod(int a,int b){ 
 
@@ -83,4 +84,20 @@ void itoa(int value, char* str, int base) {
 	
 	strreverse(str,wstr-1);
 	
+}
+
+void saveScreener(){
+	char* rule = NULL;
+
+	for(int i =0;i<10;i++){
+
+        rule = ruleGen(10);
+        Autom a = automateGen(rule);
+        free(rule);
+        rule = NULL;
+        // generiqueDisplay(a,fancyAutomateDisplay);
+        free(a->linesSave);
+        free(a);
+        a = NULL;
+    }
 }
