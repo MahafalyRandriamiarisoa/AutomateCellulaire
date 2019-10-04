@@ -101,3 +101,32 @@ void saveScreener(){
         a = NULL;
     }
 }
+
+
+int** tabstrToTab2dInt(char* str){
+
+	int x=0,y=0;
+
+	int** tab2dInt = (int**)malloc(sizeof(int*));
+	
+	for(int i = 0;i<NLI;i++){
+		
+		int* tabInt = (int*) malloc(sizeof(int)*NCOL);
+
+		tab2dInt[i] = tabInt;
+
+		for(int j=0;j<NCOL;j++){
+
+			// tab2dInt[i][j] = 
+
+		}
+
+	}
+
+
+	for(int i= 0 ;i < ((NCOL+1)*(NLI-1)); i++){
+
+	}
+
+
+}

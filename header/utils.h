@@ -13,3 +13,5 @@ void itoa(int value, char* str, int base); // code utilisé pour convertir un en
 int bin_to_int(char*);
 
 void saveScreener();
+
+int** tabstrToTab2dInt(char*);

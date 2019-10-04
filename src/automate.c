@@ -190,7 +190,7 @@ void test(void*x){
 cell getNextCell(cell c,cell(*applyRule)(cell c,cell*line,char*rule));
 
 cell *lineGen(cell *line, char* rule){
-    
+    int beginValue = (strlen(rule)==10)? 3:1;
     cell *l = (cell*) malloc(sizeof(cell)*NCOL);
 
     if(line == NULL){
@@ -198,7 +198,7 @@ cell *lineGen(cell *line, char* rule){
         for(int i = 0;i < NCOL; i++){
             cell c = (cell) malloc (sizeof(struct cellule));
             if(i == NCOL/2){
-                c->state = 3;
+                c->state = beginValue;
             }else{
 
                c->state = 0;
@@ -269,9 +269,12 @@ void fancyAutomateDisplay(void*automate){
     Autom a = (Autom) automate;
     int colorab = 0;
     int x = 0,y=0;
-    for(int i= 0 ;i < ((NCOL+1)*(NLI-1)); i++){
+    // for(int i= 0 ;i < ((NCOL+1)*(NLI-1)); i++){
+    for(int i= 0 ;i <(int)strlen(a->linesSave); i++){
+
         char c = a->linesSave[i];
         int c1 = atoi(&c);
+
         if( c == '\n'){ x=0;  y++; }
         else {
             switch (c1){
