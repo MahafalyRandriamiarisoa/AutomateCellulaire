@@ -1,0 +1,19 @@
+pour executer le programme il suffit de faire dans le dossier principal :
+
+    $ make clean
+    $ make 
+    $ make exe #un automate cellulaire apparaitra selon les configurations du fichier configurations
+
+
+
+
+pour vérifier l'état de la mémoire : 
+    $ make memoire
+
+pour generer l'image pgm:
+
+    $ make pgm
+
+pour du bonus :
+
+    $ make bonus
