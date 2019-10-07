@@ -1,19 +1,25 @@
 #include "../header/automate.h"
 
 
+_Rule initRule(char*rule,cell(*getNextCell)(cell c,cell* linec,char*rule)){
+    _Rule _rule = (_Rule) malloc(sizeof(struct Rule));
+    _rule->rule = rule;
+    _rule->getNextCell = getNextCell;
+    return _rule;
+}
 void clear_term()
 {
     stc tc_cmd = (stc) malloc(sizeof(struct s_termcap_cmd));
     init_termcap(tc_cmd);
-	tputs(tc_cmd->cl, 1, putchar);
+	tputs(tc_cmd->cl,1, putchar);
 	fflush(stdout);
     free(tc_cmd);
     tc_cmd = NULL;
 }
 
-int getIndice(cell c,cell* line){
+int getIndice(cell c,cell* line,Autom a){
     int ind = -1;
-    for(int i =0;i<NCOL;i++){
+    for(int i =0;i<a->WIDTH;i++){
         if (c == line[i]){
             return i;
         }
@@ -32,30 +38,39 @@ void freeTabCell(cell*line,int length){
     line = NULL;
 }
 
+
+
 //initialisation d'un automate
-void initAutomate(Autom a, char* rule){
+void initAutomate(Autom a, char* rule,int  MAX_Value,int FIRST_VALUE,int WIDTH,int HEIGHT, int POSITION_FIRST_VALUE,_Rule _rule){
 
     a->currentLine = NULL;
     // a->dsp 
     a->linesSave = "";
     a->rule = rule;
+
+    a->_rule = _rule;
+    a->MAX_Value = MAX_Value;
+    a->FIRST_VALUE = FIRST_VALUE;
+    a->WIDTH = WIDTH;
+    a->HEIGHT = HEIGHT;
+    a->POSITION_FIRST_VALUE = POSITION_FIRST_VALUE;
 }
 
-Autom automateGen( char* rule){
+Autom automateGen( char* rule,int MAX_Value,int FIRST_VALUE,int WIDTH,int HEIGHT,int POSITION_FIRST_VALUE, _Rule _rule){
     Autom a = (Autom) malloc (sizeof(struct automate));
     
-    initAutomate(a,rule);
+    initAutomate(a,rule,MAX_Value,FIRST_VALUE,WIDTH,HEIGHT, POSITION_FIRST_VALUE,_rule);
 
     cell *lineN = NULL;
-    char* str = (char*) calloc((NCOL+1)*NLI,sizeof(char));
-    for(int i=0;i<NLI-1;i++){
+    char* str = (char*) calloc(((a->WIDTH +1)*a->HEIGHT)+1,sizeof(char)*(((a->WIDTH +1)*a->HEIGHT)+1));
+    for(int i=0;i<a->HEIGHT;i++){
 
-        lineN = lineGen(lineN,rule);
+        lineN = lineGen(lineN,a);
         // a->currentLine = lineGen(a->currentLine)
 
 
         
-        char* s = tabcellToString(lineN,NCOL);
+        char* s = tabcellToString(lineN,a->WIDTH);
         strcat(str,s);
 
         free(s);
@@ -63,9 +78,16 @@ Autom automateGen( char* rule){
 
         strcat(str,"\n");
     }
-        freeTabCell(lineN,NCOL);
+        freeTabCell(lineN,a->WIDTH);
+        strcat(str,"\0");
         a->linesSave = str;
         return a;
+}
+
+void freeAutomate(Autom ate){
+    free(ate->linesSave);
+        free(ate);
+        ate = NULL;
 }
 
 void displayAutomate(void*automate){
@@ -113,16 +135,17 @@ char* tabcellToString(cell* t,int length){
         strcat(str,ti);
         
     }
+    strcat(str,"\0");
     // printf("strlen = %ld\n",strlen(str));
     return str;
 }
 
-cell* getNghd(cell c,cell* line){
+cell* getNghd(cell c,cell* line,Autom a){
 
     // cell nghd = (cell) malloc(sizeof(struct cellule)*3);
-    int ind_c = getIndice(c,line);
-    int idDepart = mod(ind_c - (((NB_VOISINS)-1)/2),NCOL);
-    cell* nghd = subTab(idDepart,NB_VOISINS,line,NCOL);
+    int ind_c = getIndice(c,line,a);
+    int idDepart = mod(ind_c - (((NB_VOISINS)-1)/2),a->WIDTH);
+    cell* nghd = subTab(idDepart,NB_VOISINS,line,a->WIDTH);
         return nghd;
     
 }
@@ -137,10 +160,10 @@ int sumNghd(cell* nghd){
 }
 
 
-cell applyRule(cell c,cell* line, char*rule){
+cell applyRule(cell c,cell* nghd, char*rule){
 
     cell new = (cell) malloc (sizeof(struct cellule));
-    cell* nghd = getNghd(c,line);
+    // cell* nghd = getNghd(c,line);
     char new_statechar = ' ';
     char* b = "";
     int p =0;
@@ -189,15 +212,16 @@ void test(void*x){
 
 cell getNextCell(cell c,cell(*applyRule)(cell c,cell*line,char*rule));
 
-cell *lineGen(cell *line, char* rule){
-    int beginValue = (strlen(rule)==10)? 3:1;
-    cell *l = (cell*) malloc(sizeof(cell)*NCOL);
+cell *lineGen(cell *line,Autom a){
+    // int beginValue = (strlen(rule)==10)? 3:1;
+    int beginValue = a->FIRST_VALUE;
+    cell *l = (cell*) malloc(sizeof(cell)*a->WIDTH);
 
     if(line == NULL){
         // printf("generation de la première ligne de %d caractères\n",NCOL);
-        for(int i = 0;i < NCOL; i++){
+        for(int i = 0;i < a->WIDTH; i++){
             cell c = (cell) malloc (sizeof(struct cellule));
-            if(i == NCOL/2){
+            if(i == a->POSITION_FIRST_VALUE){
                 c->state = beginValue;
             }else{
 
@@ -212,12 +236,14 @@ cell *lineGen(cell *line, char* rule){
 
     }else{
 
-        for(int i=0; i < NCOL; i++){
-
-            l[i] = (applyRule(line[i],line,rule));
+        for(int i=0; i < a->WIDTH; i++){
+            cell * nghd = getNghd(line[i],line,a);
+            // l[i] = (applyRule(line[i],nghd,rule));
+            l[i] = a->_rule->getNextCell(line[i],nghd,a->_rule->rule);
+            // freeTabCell(nghd,NB_VOISINS);
         }
        
-        freeTabCell(line,NCOL);
+        freeTabCell(line,a->WIDTH);
 
     }
 
@@ -227,7 +253,7 @@ cell *lineGen(cell *line, char* rule){
 
 char* ruleGen(int size){
     
-
+    
     char* str = (char*)calloc(size,sizeof(char)*size);
     int x = 0;
     for(int i=0;i<size;i++){
@@ -296,7 +322,8 @@ void fancyAutomateDisplay(void*automate){
             tputs( tparm(tc_cmd->af,coloraf), 1, putchar);
             tputs( tparm(tc_cmd->ab,colorab), 1, putchar);
             tputs( tgoto(tc_cmd->cm,x,y),1,putchar);
-            printf("%c",c); // dev mode
+            fflush(stdout);
+            // printf("%c",c); // dev mode
             // printf("%d",x%10); // dev mode
             printf(" ");
             x++;
@@ -304,11 +331,17 @@ void fancyAutomateDisplay(void*automate){
 
     }
     /* for(int i = 0;i < (int)strlen(a->rule);i++){
+        int coloraf = COLOR_GREEN;
+        tputs( tparm(tc_cmd->af,coloraf), 1, putchar);
          tputs( tgoto(tc_cmd->cm,i,0),1,putchar);
          printf("%c",a->rule[i]);
     } */
+    napms(0);
+    // clear_term();
+    fflush(stdout);
     tputs(tc_cmd->reset,1,putchar);
-    napms(1000);
+    
+    
     // tputs(tc_cmd.reset,1,putchar);
     // tputs(tc_cmd->ve,1,putchar);
     tputs(tc_cmd->ve,1,putchar);
@@ -332,7 +365,17 @@ void afficherTabCell(cell* t,int length){
     for(int i = 0; i<length; i++){
         printf("%d",t[i]->state);
     }
-    puts("");
+    // puts("");
+}
+// #include "../header/pgm_img.h"
+
+void automateDisplayInPGM(void*automate){
+    Autom a = (Autom) automate;
+    int** tab2d = tabstrToTab2dInt(a->linesSave,a->HEIGHT,a->WIDTH);
+    pgm p = creer_image_pgm(a->WIDTH,a->HEIGHT,a->MAX_Value,tab2d);
+    ecrire_image_pgm("IMAGE.pgm", p );
+    detruire_image_pgm(&p);
+    free(p);
 }
 
 void generiqueDisplay(void*toDisplay,void(*dspl)(void*)){
@@ -340,5 +383,14 @@ void generiqueDisplay(void*toDisplay,void(*dspl)(void*)){
     dspl(toDisplay);
 
 }
+
+
+
+// int getCOL(){
+//     return COL;
+// }
+// int getLI(){
+//     return LI;
+// }
 
 

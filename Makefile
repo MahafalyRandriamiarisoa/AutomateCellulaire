@@ -50,7 +50,8 @@ $(DOUT)/pgm_img.o : src/pgm_img.c $(DEPS)
 # 	$(CC) $(CFLAGS) -c src/RuleStrategy.c -o $(DOUT)/RuleStrategy.o 
 
 memoire : $(BIN)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(BIN)
+	valgrind --leak-check=full ./$(BIN)
+	# valgrind --leak-check=full --show-leak-kinds=all ./$(BIN)
 	# valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(BIN)
 
 memoire2 : $(BIN)
@@ -59,6 +60,8 @@ memoire2 : $(BIN)
 exe : 
 	@./$(BIN)
 
+bonus : 
+	@./$(BIN) sc
 # options de compilation
 clean:
 	rm -r $(BIN) $(DOUT)/*.o 

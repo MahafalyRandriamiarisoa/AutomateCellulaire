@@ -4,6 +4,7 @@
         "automate.h": "c",
         "utils.h": "c",
         "cstdlib": "c",
-        "curses.h": "c"
+        "curses.h": "c",
+        "pgm_img.h": "c"
     }
 }

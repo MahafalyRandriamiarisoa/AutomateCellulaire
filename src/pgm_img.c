@@ -1,14 +1,9 @@
 #include "../header/pgm_img.h"
-
+#include "../header/utils.h"
 /*!
  * Structure contenant les informations de base de l'image
  */
-struct pgm_img {
-     int largeur;
-     int hauteur;
-     int valeur_max;
-     int** image;
-};
+
 
 /*!
  * Crée une image
@@ -19,13 +14,13 @@ struct pgm_img {
  */
 pgm initialiser_image_pgm(const  int _largeur, const  int _hauteur, const  int _valeur_max) {
         
-    pgm p = malloc(sizeof(struct pgm_img));
-    
+    pgm p = (pgm) malloc(sizeof(struct pgm_img));
+     
     p->largeur = _largeur;
     p->hauteur = _hauteur;
     p->valeur_max = _valeur_max;
-
-    p->image = malloc(sizeof( int*) * _hauteur);
+    p->image = NULL;
+    /* p->image = malloc(sizeof( int*) * _hauteur);
     if(p->image == NULL) {
         fprintf(stderr, "Allocation memoire impossible pour l'image-hauteur");
     }
@@ -36,7 +31,7 @@ pgm initialiser_image_pgm(const  int _largeur, const  int _hauteur, const  int _
             fprintf(stderr, "Allocation memoire impossible pour l'image-largeur %d", i);
         }
     }
-        
+        */ 
     return p;
 
 }
@@ -76,11 +71,11 @@ static bool lire_entete_image_pgm(const FILE* fichier,  int* largeur,  int* haut
             case MAGIC_NUMBER_FOUND:
             while(strncmp(buf,"#",1) == 0) 
                 fgets(buf, MAX_LENGTH, (FILE *) fichier);
-            if(sscanf(buf,"%u %u", largeur, hauteur) == 2) etat = WIDTH_HEIGHT_FOUND; 
+            if(sscanf(buf,"%d %d", largeur, hauteur) == 2) etat = WIDTH_HEIGHT_FOUND; 
             else lireEntete = false;
             break;
             case WIDTH_HEIGHT_FOUND:
-            if(sscanf(buf,"%u", valeur_max) == 1) {
+            if(sscanf(buf,"%d", valeur_max) == 1) {
                 if(*valeur_max == 0) fprintf(stderr, "Entete PGM : une valeur max de 0 n'est pas autorisee.");
                 else etat = MAX_VAL_FOUND;
             }
@@ -226,7 +221,6 @@ void set_pixel( int i,  int j,  int pixel, pgm p) {
  * \param p un pointeur sur l'image à détruire
  */
 void detruire_image_pgm(pgm* p) {
-    
     for( int i = 0; i < (*p)->hauteur; i++) 
         free((*p)->image[i]);
                     

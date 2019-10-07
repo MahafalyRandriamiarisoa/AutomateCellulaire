@@ -1,7 +1,14 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <regex.h>
+#include <stdbool.h>
+
+#include "automate.h"
 
 int mod(int,int); //a mod b == (a % b + b) % b, pour pouvoir gerer les indices d'un tableau circulaire car l'operande "%" ne donne que le reste du division euclidienne
 
@@ -14,4 +21,12 @@ int bin_to_int(char*);
 
 void saveScreener();
 
-int** tabstrToTab2dInt(char*);
+int** tabstrToTab2dInt(char*,int,int);
+
+void displayTab2int(int**,int,int);
+
+Autom lireConfFile(const char* file);
+bool regexBool(char*,char*);
+char* extractREGEX(char*,char*);
+
+#endif

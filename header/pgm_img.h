@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "utils.h"
+
 /*! \file
  * \brief Gestion simple d'images PNG (P5, binaires).
  *
@@ -24,6 +26,12 @@
  /*!
   * Structure contenant les informations de base de l'image
   */
+ struct pgm_img {
+     int largeur;
+     int hauteur;
+     int valeur_max;
+     int** image;
+};
 typedef struct pgm_img* pgm;
 
 /*!
