@@ -60,16 +60,14 @@ typedef cell (*RuleStrategy)(cell c,cell* line);
 
 struct automate{
     
-    cell* currentLine;
-    char* rule;
 
-    _Rule _rule;
-    int MAX_Value;
+    int MAX_VALUE;
     int FIRST_VALUE;
-    int POSITION_FIRST_VALUE;
-    char* linesSave;
     int WIDTH;
     int HEIGHT;
+    int POSITION_FIRST_VALUE;
+    _Rule _rule;
+    char* linesSave;
 
     void (*dsp)(void*);
 
@@ -86,13 +84,13 @@ void test(void*);
 // passez en paramètre le pointeur d'un automate et une regle afin d'initialiser ce dernier
 
 _Rule initRule(char*,cell(*)(cell,cell*,char*));
-void initAutomate(Autom a, char* rule,int  MAX_Value,int FIRST_VALUE,int WIDTH,int HEIGHT, int POSITION_FIRST_VALUE,_Rule _rule);
+void initAutomate(Autom a,int  MAX_VALUE,int FIRST_VALUE,int WIDTH,int HEIGHT, int POSITION_FIRST_VALUE,_Rule _rule);
 
 void displayAutomate(void*);
 void fancyAutomateDisplay(void*automate);
 
 void automateDisplayInPGM(void*automate);
-Autom automateGen( char* rule,int MAX_Value,int FIRST_VALUE,int WIDTH,int HEIGHT,int POSITION_FIRST_VALUE, _Rule _rule);
+Autom automateGen(int MAX_VALUE,int FIRST_VALUE,int WIDTH,int HEIGHT,int POSITION_FIRST_VALUE, _Rule _rule);
 void freeAutomate(Autom ate);
 
 

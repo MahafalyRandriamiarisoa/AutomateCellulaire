@@ -96,7 +96,7 @@ void saveScreener(){
 		int width = NCOL;
 		_Rule _rule = initRule(rule,applyRule);
 		int pos = i%(width -1);
-        Autom a = automateGen(rule,3,3,width,NLI,pos,_rule);
+        Autom a = automateGen(3,3,width,NLI,pos,_rule);
 		
         free(rule);
         rule = NULL;
@@ -164,15 +164,18 @@ bool regexBool(char*str,char*reg){
 	err =  regcomp(&preg,reg,0);
 	if(err  != 0){
 		printf("regex fail\n");
+		regfree(&preg);
 		return false;
 	}else{
 
 		int match = regexec(&preg,str,0,NULL,0);
 		if(match!=0){
-			printf("match pas\n");
+			// printf("match pas\n");
+			regfree(&preg);
 			return false;
 		}else{
-			printf("match !\n");
+			// printf("match !\n");
+			regfree(&preg);
 			return true;
 		}
 	}
@@ -204,7 +207,7 @@ Autom lireConfFile(const char* file){
 	int x=0;
 	while(read){
 		fgets(buf, MAX_LENGTH, f);
-		printf("buf = %s",buf);
+		// printf("buf = %s",buf);
 		bool b;
 		switch(step){
 
@@ -228,8 +231,9 @@ Autom lireConfFile(const char* file){
 					
 					info = extractREGEX(buf,"([01]{8}|[0123]{10})");
 					if(b){
-					printf("%s\n",info);
+					// printf("%s\n",info);
 					_rule = initRule(info,applyRule);
+					
 					
 					step = MAX_VALUE;
 					}else{
@@ -248,7 +252,7 @@ Autom lireConfFile(const char* file){
 				if(b){
 					info = extractREGEX(buf,"([01-9]+)");
 					x = atoi(info);
-					printf("info = %d\n",x);
+					// printf("info = %d\n",x);
 					if(x>=0){
 						MAX_V = x ;
 						step = FIRST_VALUE;
@@ -258,7 +262,8 @@ Autom lireConfFile(const char* file){
 						printf("MAX VALUE = %d\n",x);
 						strcat(errormsg," MAX_VALUE mal définis");
 					}
-					
+					free(info);
+					info = NULL;
 				}else{
 					step = ERROR;
 					strcat(errormsg," MAX_VALUE mal définis");
@@ -269,7 +274,7 @@ Autom lireConfFile(const char* file){
 				b =  regexBool(buf,"FIRST_VALUE: \\d*");
 				if(b){
 					info = extractREGEX(buf,"([01-9]+)");
-					printf("info = %s\n",info);
+					// printf("info = %s\n",info);
 					x = atoi(info);
 					if(x>=0){
 						FIRST_V = x;
@@ -277,12 +282,13 @@ Autom lireConfFile(const char* file){
 					}
 					else{
 						step = ERROR;
-						printf("FIRST VALUE = %d\n",x);
+						// printf("FIRST VALUE = %d\n",x);
 						strcat(errormsg," FIRST_VALUE mal définis");
 					}
 
 					
-					
+					free(info);
+					info = NULL;
 				}else{
 					step = ERROR;
 					strcat(errormsg," FIRST_VALUE mal définis");
@@ -295,7 +301,7 @@ Autom lireConfFile(const char* file){
 				b =  regexBool(buf,"WIDTH: \\d*");
 				if(b){
 					info = extractREGEX(buf,"([01-9]+)");
-					printf("info = %s\n",info);
+					// printf("info = %s\n",info);
 					x = atoi(info);
 					if(x>=0){
 						WDTH = x;
@@ -303,12 +309,13 @@ Autom lireConfFile(const char* file){
 					}
 					else{
 						step = ERROR;
-						printf("FIRST VALUE = %d\n",x);
+						// printf("FIRST VALUE = %d\n",x);
 						strcat(errormsg," FIRST_VALUE mal définis");
 					}
 
 					
-					
+					free(info);
+					info = NULL;
 				}else{
 					step = ERROR;
 					strcat(errormsg," WIDTH mal définis");
@@ -320,8 +327,10 @@ Autom lireConfFile(const char* file){
 				b =  regexBool(buf,"HEIGHT: \\d*");
 				if(b){
 					info = extractREGEX(buf,"([01-9]+)");
-					printf("info = %s\n",info);
+					// printf("info = %s\n",info);
 					x = atoi(info);
+					free(info);
+					info = NULL;
 					if(x>=0){
 						HGHT = x;
 						step = POSITION_FIRST_VALUE;
@@ -360,16 +369,17 @@ Autom lireConfFile(const char* file){
 					}
 			
 					if((x>=0) && (x< WDTH)){
-							printf("x pos = %d\n",x);
+							// printf("x pos = %d\n",x);
 						POSITION_FIRST_V = x;
 						step = END;
 					}
 					else{
 						step = ERROR;
-						printf("HEROOR = %d\n",x);
+						// printf("HEROOR = %d\n",x);
 						strcat(errormsg," POSITION_FIRST_VALUE mal définis");
 					}
-					
+					free(info);
+					info = NULL;
 				}else{
 					step = ERROR;
 					strcat(errormsg," POSITION_FIRST_VALUE mal définis");
@@ -378,7 +388,7 @@ Autom lireConfFile(const char* file){
 				break;
 
 			case END: 
-				printf("lecture finis sans encombre !\n");
+				printf("Lecture du fichier de configuration terminée !\n");
 				read = false;
 				break;
 			case ERROR:
@@ -391,7 +401,8 @@ Autom lireConfFile(const char* file){
 			
 		}
 	}
-	Autom ate = automateGen(" ",MAX_V, FIRST_V, WDTH, HGHT,POSITION_FIRST_V, _rule);
+		free(buf);
+	Autom ate = automateGen(MAX_V, FIRST_V, WDTH, HGHT,POSITION_FIRST_V, _rule);
 	free(errormsg);
 	fclose(f);
 	return ate;
@@ -427,9 +438,9 @@ char* extractREGEX(char*req,char*pattern){
 		 
             if (sub_string)
             {
-               strncpy (sub_string, &str_request[start], size);
-               sub_string[size] = '\0';
-
+            	strncpy (sub_string, &str_request[start], size);
+            	sub_string[size] = '\0';
+				free(pmatch);
 			   return sub_string;
             }
          }

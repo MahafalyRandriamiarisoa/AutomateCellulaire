@@ -8,7 +8,13 @@ pour executer le programme il suffit de faire dans le dossier principal :
 
 
 pour vérifier l'état de la mémoire : 
+
     $ make memoire
+
+
+pour l'affichage de l'automate en couleur dans le terminal:
+
+    $ make fexe
 
 pour generer l'image pgm:
 

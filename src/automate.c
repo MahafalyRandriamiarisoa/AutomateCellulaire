@@ -40,33 +40,28 @@ void freeTabCell(cell*line,int length){
 
 
 
-//initialisation d'un automate
-void initAutomate(Autom a, char* rule,int  MAX_Value,int FIRST_VALUE,int WIDTH,int HEIGHT, int POSITION_FIRST_VALUE,_Rule _rule){
+void initAutomate(Autom a,int  MAX_VALUE,int FIRST_VALUE,int WIDTH,int HEIGHT, int POSITION_FIRST_VALUE,_Rule _rule){
 
-    a->currentLine = NULL;
-    // a->dsp 
     a->linesSave = "";
-    a->rule = rule;
 
     a->_rule = _rule;
-    a->MAX_Value = MAX_Value;
+    a->MAX_VALUE = MAX_VALUE;
     a->FIRST_VALUE = FIRST_VALUE;
     a->WIDTH = WIDTH;
     a->HEIGHT = HEIGHT;
     a->POSITION_FIRST_VALUE = POSITION_FIRST_VALUE;
 }
 
-Autom automateGen( char* rule,int MAX_Value,int FIRST_VALUE,int WIDTH,int HEIGHT,int POSITION_FIRST_VALUE, _Rule _rule){
+Autom automateGen(int MAX_VALUE,int FIRST_VALUE,int WIDTH,int HEIGHT,int POSITION_FIRST_VALUE, _Rule _rule){
     Autom a = (Autom) malloc (sizeof(struct automate));
     
-    initAutomate(a,rule,MAX_Value,FIRST_VALUE,WIDTH,HEIGHT, POSITION_FIRST_VALUE,_rule);
+    initAutomate(a,MAX_VALUE,FIRST_VALUE,WIDTH,HEIGHT, POSITION_FIRST_VALUE,_rule);
 
     cell *lineN = NULL;
     char* str = (char*) calloc(((a->WIDTH +1)*a->HEIGHT)+1,sizeof(char)*(((a->WIDTH +1)*a->HEIGHT)+1));
     for(int i=0;i<a->HEIGHT;i++){
 
         lineN = lineGen(lineN,a);
-        // a->currentLine = lineGen(a->currentLine)
 
 
         
@@ -169,7 +164,7 @@ cell applyRule(cell c,cell* nghd, char*rule){
     int p =0;
     
 
-    int lenRule = strlen(rule);
+    int lenRule = (int) strlen(rule);
     switch (lenRule){
         case 8:
         //  char* cnghd = tabcellToString(c);
@@ -372,7 +367,7 @@ void afficherTabCell(cell* t,int length){
 void automateDisplayInPGM(void*automate){
     Autom a = (Autom) automate;
     int** tab2d = tabstrToTab2dInt(a->linesSave,a->HEIGHT,a->WIDTH);
-    pgm p = creer_image_pgm(a->WIDTH,a->HEIGHT,a->MAX_Value,tab2d);
+    pgm p = creer_image_pgm(a->WIDTH,a->HEIGHT,a->MAX_VALUE,tab2d);
     ecrire_image_pgm("IMAGE.pgm", p );
     detruire_image_pgm(&p);
     free(p);

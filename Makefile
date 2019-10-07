@@ -58,12 +58,21 @@ memoire2 : $(BIN)
 	valgrind --leak-check=full --show-leak-kinds=all ./$(BIN) sc
 
 exe : 
-	@./$(BIN)
+	@./$(BIN) std
 
+fexe : 
+	@./$(BIN) fcy
+
+pgm : 
+	@./$(BIN) pgm
+	
 bonus : 
 	@./$(BIN) sc
 # options de compilation
 clean:
 	rm -r $(BIN) $(DOUT)/*.o 
+
+cleanPgm : 
+	rm *.pgm
  
 #mention speciale à : http://www.bien-programmer.fr/make.htm
